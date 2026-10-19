@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Bot Panel</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b100e;
+  --panel: #141d18;
+  --border: #293a30;
+  --green: #66e394;
+  --muted: #a3b3a8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: #f0f6f1;
+}
+header {
+  padding: 22px;
+  border-bottom: 1px solid var(--border);
+  background: #101813;
+}
+.wrap { max-width: 1050px; margin: auto; }
+.brand { font-size: 21px; font-weight: 800; }
+.brand span { color: var(--green); }
+header p { color: var(--muted); margin-bottom: 0; }
+main { max-width: 1050px; margin: auto; padding: 24px 16px; }
+h2 { font-size: 17px; margin-top: 0; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.label { color: var(--muted); font-size: 13px; }
+.value { font-size: 20px; font-weight: 700; margin-top: 8px; }
+.status { color: #f3c86a; }
+button, input {
+  font: inherit;
+  border-radius: 8px;
+  padding: 11px 14px;
+}
+button {
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-weight: 700;
+  background: #26362c;
+  color: white;
+}
+button:hover { filter: brightness(1.15); }
+button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--green);
+}
+.primary { background: var(--green); color: #07120a; border: 0; }
+.danger { background: #452523; border-color: #74413a; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; }
+input {
+  width: 100%;
+  background: #0b100e;
+  color: white;
+  border: 1px solid var(--border);
+  margin: 8px 0 12px;
+}
+.logs {
+  background: #080c09;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 120px;
+  max-height: 230px;
+  overflow: auto;
+  font: 13px/1.8 monospace;
+  overflow-wrap: anywhere;
+}
+.logline { color: #b9d4c1; }
+.note { color: var(--muted); font-size: 13px; line-height: 1.6; }
+footer { text-align: center; padding: 24px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">⛏ Mine<span>Bot</span> Panel</div>
+    <p>তোমার Minecraft bot-এর dashboard</p>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Server Overview</h2>
+    <div class="grid">
+      <div>
+        <div class="label">Bot Status</div>
+        <div class="value status" id="status">DEMO MODE</div>
+      </div>
+      <div>
+        <div class="label">Bot Username</div>
+        <div class="value">TestBot</div>
+      </div>
+      <div>
+        <div class="label">Minecraft Server</div>
+        <div class="value" style="font-size:15px">Wonders0000.aternos.me</div>
+      </div>
+      <div>
+        <div class="label">Server Port</div>
+        <div class="value">33455</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Bot Controls</h2>
+    <p class="note">এগুলো এখন demo button। এগুলো দিয়ে আসল bot চালু বা বন্ধ হয় না।</p>
+    <div class="controls">
+      <button class="primary" id="start">▶ Start Bot</button>
+      <button class="danger" id="stop">■ Stop Bot</button>
+      <button id="reconnect">↻ Reconnect</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Send Chat Message</h2>
+    <form id="chatForm">
+      <label for="message" class="label">Message</label>
+      <input id="message" maxlength="200" placeholder="তোমার message লেখো..." required>
+      <button class="primary" type="submit">Send Message</button>
+    </form>
+    <p class="note">Demo mode-এ message শুধু log-এ দেখা যাবে, Minecraft server-এ যাবে না।</p>
+  </div>
+
+  <div class="card">
+    <h2>Console Logs</h2>
+    <div class="logs" id="logs" aria-live="polite"></div>
+    <br>
+    <button id="clear">Clear Logs</button>
+  </div>
+  <p class="note">নিরাপত্তা: এই dashboard-এ কোনো password বা secret key রাখবে না।</p>
+</main>
+
+<footer>MineBot Panel · Personal Minecraft project</footer>
+
+<script>
+const status = document.getElementById('status');
+const logs = document.getElementById('logs');
+
+function log(message) {
+  const line = document.createElement('div');
+  line.className = 'logline';
+  line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + message;
+  logs.appendChild(line);
+  logs.scrollTop = logs.scrollHeight;
+}
+
+document.getElementById('start').addEventListener('click', () => {
+  status.textContent = 'DEMO MODE';
+  log('Start button pressed. Backend is not connected yet.');
+});
+
+document.getElementById('stop').addEventListener('click', () => {
+  log('Stop button pressed. No real bot was stopped.');
+});
+
+document.getElementById('reconnect').addEventListener('click', () => {
+  log('Reconnect pressed. A real connection is not configured.');
+});
+
+document.getElementById('chatForm').addEventListener('submit', event => {
+  event.preventDefault();
+  const input = document.getElementById('message');
+  const message = input.value.trim();
+  if (!message) return;
+  log('Demo chat: ' + message);
+  input.value = '';
+});
+
+document.getElementById('clear').addEventListener('click', () => {
+  logs.replaceChildren();
+  log('Logs cleared.');
+});
+
+log('Dashboard opened in demo mode.');
+</script>
+</body>
+</html>
